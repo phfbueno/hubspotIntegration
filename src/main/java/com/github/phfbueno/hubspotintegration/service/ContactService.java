@@ -36,8 +36,6 @@ public class ContactService {
     public ContactResponseDTO createContact(ContactRequestDTO dto) {
         log.info("Iniciando criação de contato no HubSpot");
 
-        String url = "https://api.hubapi.com/crm/v3/objects/contacts";
-
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("firstname", dto.firstName());
@@ -55,7 +53,7 @@ public class ContactService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
         try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(hubspotConfig.getContactUrl(), HttpMethod.POST, requestEntity, String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 JsonNode root = objectMapper.readTree(response.getBody());

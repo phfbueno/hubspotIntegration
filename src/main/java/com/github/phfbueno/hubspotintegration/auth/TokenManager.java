@@ -27,10 +27,6 @@ public class TokenManager {
     private  long expirationTime;
     private String refreshToken;
 
-    private static final long EXPIRATION_TIME_LIMIT = 3600;
-
-
-
 
     public  String getAccessToken() {
 
