@@ -24,12 +24,15 @@ public class AuthService {
 
     private final HubspotConfig hubspotConfig;
     private final TokenManager tokenManager;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
-    public AuthService(HubspotConfig hubspotConfig, TokenManager tokenManager) {
+    public AuthService(HubspotConfig hubspotConfig, TokenManager tokenManager, RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.hubspotConfig = hubspotConfig;
         this.tokenManager = tokenManager;
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
     }
-
     public String generateAuthorizationUrl() {
         log.info("Gerando URL de autorização com client_id, redirect_uri, e scopes.");
 
@@ -62,12 +65,10 @@ public class AuthService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
         try {
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(hubspotConfig.getTokenUrl(), HttpMethod.POST, request, String.class);
             log.info("Resposta recebida do HubSpot: {}", response.getBody());
 
             if (response.getStatusCode() == HttpStatus.OK) {
-                ObjectMapper objectMapper = new ObjectMapper();
                 AuthTokenResponse tokenResponse = objectMapper.readValue(response.getBody(), AuthTokenResponse.class);
                 log.info("Token de acesso obtido: {}", tokenResponse.getAccessToken());
 
